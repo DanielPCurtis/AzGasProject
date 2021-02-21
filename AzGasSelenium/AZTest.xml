@@ -13,4 +13,23 @@
        <class name="footerSuite.FooterTest"/>
      </classes>
    </test>
+   
+   <test name="LogoTest">
+     <classes>
+       <class name="logoSuite.LogoTest"/>
+     </classes>
+   </test>
+   
+   <test name="MainContentTest">
+     <classes>
+       <class name="mainContentSuite.MainContentTest"/>
+     </classes>
+   </test>
+   
+   <test name="ShopifyNavTest">
+     <classes>
+       <class name="shopifyNavSuite.ShopifyNavTest"/>
+     </classes>
+   </test>
+   
 </suite>
