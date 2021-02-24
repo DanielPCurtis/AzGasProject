@@ -1,11 +1,3 @@
-/*
- * @author Daniel Curtis
- * 
- * Test the footer links
- * -Should be able to view/click the links on any page of the site
- * 
- */
-
 package footerSuite;
 
 import java.io.File;
@@ -23,37 +15,47 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.Assert;
 import org.testng.annotations.*;
 
-public class FooterTest {
+public class FooterWaitTest {
 	public String baseUrl = "https://www.azaleagas.com";
 	public String driverPath = "C://Users/dcurt/Downloads/geckodriver.exe";
 	public WebDriver driver;
 	public Properties pro;
-	public WebDriverWait wait; 
-	
+	public WebDriverWait wait;
+
+	/*	Navigate to the website
+	 * 
+	 * 	@returns {void}
+	 */
 	@BeforeTest
-	public void setBaseUrl() throws IOException {
-		
-		
+	public void setBaseUrl() throws IOException	{
 		File f1 = new File("C:\\Users\\dcurt\\eclipse-workspace\\AzGasSelenium\\AzGasSelenium.properties");
 		FileInputStream fis = new FileInputStream(f1);
 		pro = new Properties();
 		pro.load(fis);
 		
-		wait = new WebDriverWait(driver, 3);
+		
 		
 		System.setProperty("webdriver.gecko.driver", driverPath);
         driver = new FirefoxDriver();
         driver.get(baseUrl);
-	}
-	@BeforeMethod
-	public void verifyHomepage()	{
-		driver.manage().timeouts().implicitlyWait(1,TimeUnit.SECONDS) ;
-		String expectedTitle = "Azalea Gas: Home";
-	    String actualTitle = driver.getTitle();
-	    Assert.assertEquals(actualTitle, expectedTitle);
-	    driver.manage().timeouts().implicitlyWait(1,TimeUnit.SECONDS) ;
+        
+        wait = new WebDriverWait(driver, 3);
 	}
 	
+	/*	Verify that we are starting at the homepage before each test
+	 * 
+	 * 	@returns {void}
+	 */
+	@BeforeMethod
+	public void verifyHomepage()	{
+		String expectedTitle = "Azalea Gas: Home";
+		wait.until(ExpectedConditions.titleIs(expectedTitle));
+	    String actualTitle = driver.getTitle();
+	    Assert.assertEquals(actualTitle, expectedTitle);
+	    
+	}
+	
+	///////////////////
 	/* 	Scroll down to the phone number element
 	 * 	verify that the correct number is displayed 
 	 * 
@@ -64,11 +66,11 @@ public class FooterTest {
 		//Scroll to the footer links
 		Actions actions = new Actions(driver);
 		actions.sendKeys(Keys.END).perform();
-		driver.manage().timeouts().implicitlyWait(1,TimeUnit.SECONDS) ;
 		
+		WebElement phone = driver.findElement(By.xpath(pro.getProperty("footer.phone.xpath")));
+		wait.until(ExpectedConditions.visibilityOf(phone));
 		//verify the correct phone number is displayed for the business
-		String actual = driver.findElement(By.xpath(pro.getProperty("footer.phone.xpath"))).getText();
-		driver.manage().timeouts().implicitlyWait(1,TimeUnit.SECONDS) ;
+		String actual = phone.getText();
 		String expected = "(910) 350-1111";
 		Assert.assertEquals(actual, expected);
 	}
@@ -83,11 +85,15 @@ public class FooterTest {
 		//Scroll to the footer links
 		Actions actions = new Actions(driver);
 		actions.sendKeys(Keys.END).perform();
-		driver.manage().timeouts().implicitlyWait(1,TimeUnit.SECONDS) ;
+		
+		WebElement addOne = driver.findElement(By.xpath(pro.getProperty("footer.addressOne.xpath")));
+		WebElement addTwo = driver.findElement(By.xpath(pro.getProperty("footer.addressTwo.xpath")));
+		wait.until(ExpectedConditions.visibilityOf(addOne));
+		wait.until(ExpectedConditions.visibilityOf(addTwo));
 		
 		//verify that the address is displayed correctly in the footer
-		String actual1 = driver.findElement(By.xpath(pro.getProperty("footer.addressOne.xpath"))).getText();
-		String actual2 = driver.findElement(By.xpath(pro.getProperty("footer.addressTwo.xpath"))).getText();
+		String actual1 = addOne.getText();
+		String actual2 = addTwo.getText();
 		String expected1 = "2417 Wrightsville Ave,";
 		String expected2 = "Wilmington, NC 28403";
 		Assert.assertEquals(actual1, expected1);
@@ -104,10 +110,12 @@ public class FooterTest {
 		//Scroll to the footer links
 		Actions actions = new Actions(driver);
 		actions.sendKeys(Keys.END).perform();
-		driver.manage().timeouts().implicitlyWait(1,TimeUnit.SECONDS) ;
+		
+		WebElement lic = driver.findElement(By.xpath(pro.getProperty("footer.license.xpath")));
+		wait.until(ExpectedConditions.visibilityOf(lic));
 		
 		//verify the text matches what should be displayed
-		String actual = driver.findElement(By.xpath(pro.getProperty("footer.license.xpath"))).getText();
+		String actual = lic.getText();
 		String expected = "Licensed and Insured";
 		Assert.assertEquals(actual, expected);
 	}
@@ -122,15 +130,15 @@ public class FooterTest {
 		//Scroll to the footer links
 		Actions actions = new Actions(driver);
 		actions.sendKeys(Keys.END).perform();
-		driver.manage().timeouts().implicitlyWait(1,TimeUnit.SECONDS) ;
 		
-		//click the Tank Systems link
-		driver.findElement(By.xpath(pro.getProperty("footer.system.xpath"))).click();
-		driver.manage().timeouts().implicitlyWait(1,TimeUnit.SECONDS) ;
-		
+		WebElement sys = driver.findElement(By.xpath(pro.getProperty("footer.system.xpath")));
+		wait.until(ExpectedConditions.elementToBeClickable(sys));
+		sys.click();
+	
 		//verify we are at the Tank Systems page
-		String actual = driver.getCurrentUrl();
 		String expect = "https://www.azaleagas.com/#systems";
+		wait.until(ExpectedConditions.urlToBe(expect));
+		String actual = driver.getCurrentUrl();
 		Assert.assertEquals(actual, expect);
 	}
 	
@@ -147,12 +155,14 @@ public class FooterTest {
 		driver.manage().timeouts().implicitlyWait(1,TimeUnit.SECONDS) ;
 		
 		//click the Fireplace Sets link
-		driver.findElement(By.xpath(pro.getProperty("footer.fireplace.xpath"))).click();
-		driver.manage().timeouts().implicitlyWait(1,TimeUnit.SECONDS) ;
+		WebElement fire = driver.findElement(By.xpath(pro.getProperty("footer.fireplace.xpath")));
+		wait.until(ExpectedConditions.elementToBeClickable(fire));
+		fire.click();
 		
 		//verify we are at the Fireplace Sets page
-		String actual = driver.getCurrentUrl();
 		String expect = "https://www.azaleagas.com/#fireplace";
+		wait.until(ExpectedConditions.urlToBe(expect));
+		String actual = driver.getCurrentUrl();
 		Assert.assertEquals(actual, expect);
 	}
 	
@@ -166,15 +176,16 @@ public class FooterTest {
 		//Scroll to the footer links
 		Actions actions = new Actions(driver);
 		actions.sendKeys(Keys.END).perform();
-		driver.manage().timeouts().implicitlyWait(1,TimeUnit.SECONDS) ;
 		
 		//Click the Instructions Link
-		driver.findElement(By.xpath(pro.getProperty("footer.instruct.xpath"))).click();
-		driver.manage().timeouts().implicitlyWait(1,TimeUnit.SECONDS) ;
+		WebElement inst = driver.findElement(By.xpath(pro.getProperty("footer.instruct.xpath")));
+		wait.until(ExpectedConditions.elementToBeClickable(inst));
+		inst.click();
 		
 		//verify we are at the Instructions page
-		String actual = driver.getCurrentUrl();
 		String expect = "https://www.azaleagas.com/#instruct";
+		wait.until(ExpectedConditions.urlToBe(expect));
+		String actual = driver.getCurrentUrl();
 		Assert.assertEquals(actual, expect);
 	}
 	
@@ -191,12 +202,14 @@ public class FooterTest {
 		driver.manage().timeouts().implicitlyWait(1,TimeUnit.SECONDS) ;
 		
 		//Click the Questions and Answers link
-		driver.findElement(By.xpath(pro.getProperty("footer.question.xpath"))).click();
-		driver.manage().timeouts().implicitlyWait(1,TimeUnit.SECONDS) ;
+		WebElement quest = driver.findElement(By.xpath(pro.getProperty("footer.question.xpath")));
+		wait.until(ExpectedConditions.elementToBeClickable(quest));
+		quest.click();
 		
 		//verify we are at the Q & A page
-		String actual = driver.getCurrentUrl();
 		String expect = "https://www.azaleagas.com/#questions";
+		wait.until(ExpectedConditions.urlToBe(expect));
+		String actual = driver.getCurrentUrl();
 		Assert.assertEquals(actual, expect);
 	}
 	
@@ -204,51 +217,33 @@ public class FooterTest {
 	 * 	verify we are where we thought we were
 	 * 
 	 * 	@returns {void}
-	 
+	 */
 	@Test(priority = 7)
 	public void clickDirections()	{
-	
-		wait = new WebDriverWait(driver, 10);
-		String og = driver.getWindowHandle();
-		//Check we don't have other windows open already
-		assert driver.getWindowHandles().size() == 1;
-		driver.manage().timeouts().implicitlyWait(1,TimeUnit.SECONDS) ;
+		
 		//Scroll to the footer links
 		Actions actions = new Actions(driver);
 		actions.sendKeys(Keys.END).perform();
-		driver.manage().timeouts().implicitlyWait(1,TimeUnit.SECONDS) ;
 		
 		//click the Directions link
-		driver.findElement(By.xpath(pro.getProperty("footer.direction.xpath"))).click();
-		driver.manage().timeouts().implicitlyWait(1,TimeUnit.SECONDS) ;
-		
-		/*Loop through until we find a new window handle
-		for (String windowHandle : driver.getWindowHandles()) {
-		    if(!og.contentEquals(windowHandle)) {
-		        driver.switchTo().window(windowHandle);
-		        break;
-		    }
-		}
+		WebElement dir = driver.findElement(By.xpath(pro.getProperty("footer.direction.xpath")));
+		wait.until(ExpectedConditions.elementToBeClickable(dir));
+		dir.click();
 		
 		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"sb_cb50\"]")));
 		
-		//verify that the correct Googlemaps page has loaded
-		String actual = driver.getCurrentUrl();
+		//verify that the correct Googlemaps page has loaded		
 		String expect = "https://www.google.co.in/maps?q=2417+Wrightsville+Ave,+Wilmington,+NC+28403";
+		wait.until(ExpectedConditions.urlToBe(expect));
+		String actual = driver.getCurrentUrl();
 		Assert.assertEquals(actual, expect);
 		
 		driver.navigate().back();
 		
 		actions = new Actions(driver);
-		actions.sendKeys(Keys.END).perform();
-		
-		//Close the tab or window
-		//driver.close();
-
-		//Switch back to the old tab or window
-		//driver.switchTo().window(og);
+		actions.sendKeys(Keys.HOME).perform();
 	}
-	 */
+	 
 	
 	/*	Scroll down to the address element in the footer and click
 	 * 	verify that we are where we thought we were
@@ -257,7 +252,7 @@ public class FooterTest {
 	 */
 	@Test(priority = 8)
 	public void footerMapClickTest()	{
-		wait = new WebDriverWait(driver, 10);
+
 		String og = driver.getWindowHandle();
 		//Check we don't have other windows open already
 		assert driver.getWindowHandles().size() == 1;
@@ -265,13 +260,13 @@ public class FooterTest {
 		//Scroll to the footer links
 		Actions actions = new Actions(driver);
 		actions.sendKeys(Keys.END).perform();
-		driver.manage().timeouts().implicitlyWait(1,TimeUnit.SECONDS) ;
 		
 		//Click the first address link     
-		driver.findElement(By.xpath(pro.getProperty("footer.addressClick.xpath"))).click();
+		WebElement addyClick = driver.findElement(By.xpath(pro.getProperty("footer.addressClick.xpath")));
 		//Comment the line below and re-comment the line above if you want to test the bottom span to verify element can be clicked
-		//driver.findElement(By.xpath(pro.getProperty("footer.addressOne.xpath"))).click();
-		driver.manage().timeouts().implicitlyWait(1,TimeUnit.SECONDS) ;
+		//WebElement addyClick = driver.findElement(By.xpath(pro.getProperty("footer.addressOne.xpath")));
+		wait.until(ExpectedConditions.elementToBeClickable(addyClick));
+		addyClick.click();
 
 		//Loop through until we find a new window handle
 		for (String windowHandle : driver.getWindowHandles()) {
@@ -281,10 +276,9 @@ public class FooterTest {
 		    }
 		}
 		
-		wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id=\"sb_cb50\"]")));
-		
 		//verify we have been taken to the correct googlemaps directions link.
 		String expected = "https://www.google.co.in/maps?q=2417+Wrightsville+Ave,+Wilmington,+NC+28403";
+		wait.until(ExpectedConditions.urlToBe(expected));
 		String actual = driver.getCurrentUrl();
 		Assert.assertEquals(actual, expected);
 		
@@ -294,25 +288,31 @@ public class FooterTest {
 		//Switch back to the old tab or window
 		driver.switchTo().window(og);
 	}
+	/////////////////////
 	
-	/*	Returns to the Home Page after every test
+	/*	Returns to the home page after every test
 	 * 
-	 *	@returns {void} 
+	 * 	@returns {void}
 	 */
 	@AfterMethod
     public void returnToHome()	{
-    	driver.findElement(By.xpath(pro.getProperty("footer.welcome.xpath"))).click();
-    	String actual = driver.getCurrentUrl();
+    	WebElement home = driver.findElement(By.cssSelector(pro.getProperty("header.welcome.selector")));
+    	wait.until(ExpectedConditions.visibilityOf(home));
+    	home.click();
+    	
 		String expect = "https://www.azaleagas.com/#home";
+		wait.until(ExpectedConditions.urlToBe(expect));
+		String actual = driver.getCurrentUrl();
 		Assert.assertEquals(actual, expect);
-    } 
+    }
 	
-	/*	Closing Time, the browser might not have to go home but it can't stay here
+	/*	Shuts down the browser, nothing more to see here
 	 * 
-	 * 	@returns {void}
+	 * @returns {void}
 	 */
     @AfterTest
     public void closeBrowser()	{
       driver.quit();
     }
+	
 }

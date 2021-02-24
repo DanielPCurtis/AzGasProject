@@ -4,32 +4,32 @@
          
   <test name="NavBarTest">
 	 <classes>
-	   <class name="navSuite.NavBarTest"/>
+	   <class name="navSuite.NavExecTryTest"/>
 	 </classes>
    </test>
    
   <test name="FooterTest">
      <classes>
-       <class name="footerSuite.FooterTest"/>
+       <class name="footerSuite.FooterWaitTest"/>
      </classes>
    </test>
    
    <test name="LogoTest">
      <classes>
-       <class name="logoSuite.LogoTest"/>
+       <class name="logoSuite.LogoWaitTest"/>
      </classes>
    </test>
    
-   <test name="MainContentTest">
-     <classes>
-       <class name="mainContentSuite.MainContentTest"/>
-     </classes>
+   <test name="shopifyNavTest">
+   	<classes>
+   		<class name="shopifyNavSuite.shopifyNavTest"/>
+   	</classes>
    </test>
    
-   <test name="ShopifyNavTest">
-     <classes>
-       <class name="shopifyNavSuite.ShopifyNavTest"/>
-     </classes>
+   <test name="MainContentWaitTest">
+   	<classes>
+   		<class name="mainContentSuite.MainContentWaitTest"/>
+   	</classes>
    </test>
    
 </suite>
